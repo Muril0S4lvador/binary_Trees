@@ -3,7 +3,17 @@
 #define _BINARY_TREE_H_
 
 #include "person.h"
-#include "vector.h"
+// #include "vector.h"
+
+/*
+A entrada do problema consiste em uma sequência de operações de atribuição e leitura de pares chave-valor 
+em uma árvore binária genérica. A primeira linha da entrada informa o número de operações. 
+Para cada operação de atribuição (set), são dados 4 valores representando o CPF de uma pessoa (string), 
+seu nome (assuma que sempre contém apenas uma palavra), idade (int) e altura (float). O CPF será a chave da árvore. 
+Os demais valores devem ser usados para criar uma variável do tipo Pessoa que será o valor associado à chave na árvore. 
+Para cada operação de leitura (get), é dado o CPF de uma pessoa e o programa deve mostrar na tela os dados da 
+pessoa que possui aquele CPF. A altura deve ser exibida com 2 casas depois da vírgula
+*/
 
 typedef int (*CmpFn)(void *, void *);
 typedef void (*KeyDestroyFn)(void *);
@@ -17,8 +27,7 @@ typedef struct
 
 typedef struct Node
 {
-    void *key;
-    void *value;
+    KeyValPair *pair;
     struct Node *left;
     struct Node *right;
 } Node;
