@@ -114,15 +114,128 @@ int binary_tree_empty(BinaryTree *bt){
     return !bt->root;
 }
 
-void binary_tree_remove(BinaryTree *bt, void *key);
+void binary_tree_remove(BinaryTree *bt, void *key){
+    Node *n = bt->root, *parent = NULL;
+    int left = 0;
+    
+    // Pego o node que procuro
+    while(n){
+        KeyValPair *pair = n->pair;
 
-KeyValPair binary_tree_min(BinaryTree *bt);
+        if(bt->cmp_fn(pair->key, key) < 0){
+            // Caso a chave 2 seja maior que node, direita
+            parent = n;
+            n = n->right;
+            left = 0;
 
-KeyValPair binary_tree_max(BinaryTree *bt);
+        } else if( bt->cmp_fn(pair->key, key) > 0 ){
+            // Caso a chave 2 seja menor que node, esquerda
+            parent = n;
+            n = n->left;
+            left = 1;
 
-KeyValPair binary_tree_pop_min(BinaryTree *bt);
+        } else{
+            break;
 
-KeyValPair binary_tree_pop_max(BinaryTree *bt);
+        }
+    }
+
+    if(!n){
+        return;
+
+    } else if(n == bt->root){
+        bt->root = NULL;
+
+    } else if( !n->left && !n->right ){
+        // Caso nao tenha filhos
+        if(left)
+            parent->left = NULL;
+        else
+            parent->right = NULL;
+        
+    } else if( !n->left ){
+        // Caso tenha apenas filho a direita
+        if(left)
+            parent->left = n->right;
+        else
+            parent->right = n->right;
+
+    } else if( !n->right ){
+        // Caso tenha apenas filho a esquerda
+        if(left)
+            parent->left = n->left;
+        else
+            parent->right = n->left;
+
+    } else{
+        Node *sucessor = NULL, *n2 = n->right;
+
+        while( n2 ){
+            sucessor = n2;
+            n2 = n2->left;
+        }
+    }
+
+    node_destroy(n, bt->key_destroy_fn, bt->val_destroy_fn);
+}
+
+KeyValPair binary_tree_min(BinaryTree *bt){
+    Node *n = bt->root, *parent = NULL;
+
+    while(n){
+        parent = n;
+        n = n->left;
+    }
+    KeyValPair kvp = {parent->pair->key, parent->pair->value};
+    return kvp;
+}
+
+KeyValPair binary_tree_max(BinaryTree *bt){
+    Node *n = bt->root, *parent = NULL;
+
+    while(n){
+        parent = n;
+        n = n->right;
+    }
+    KeyValPair kvp = {parent->pair->key, parent->pair->value};
+    return kvp;
+}
+
+KeyValPair *binary_tree_pop_min(BinaryTree *bt){
+    Node *n = bt->root, *parent = NULL;
+    if(!n)
+        return NULL;
+
+    while(n->left){
+        parent = n;
+        n = n->left;
+    }
+    if(parent)
+        parent->left = n->left;
+    else
+        bt->root = n->right;
+    KeyValPair *kvp = n->pair;
+    free(n);
+    return kvp;
+}
+
+KeyValPair *binary_tree_pop_max(BinaryTree *bt){
+    Node *n = bt->root, *parent = NULL;
+    if(!n)
+        return NULL;
+
+    while(n->right){
+        parent = n;
+        n = n->right;
+    }
+    if(parent)
+        parent->right = n->left;
+    else
+        bt->root = n->left;
+    KeyValPair *kvp = n->pair;
+    free(n);
+    return kvp;
+}
 
 void *binary_tree_get(BinaryTree *bt, void *key){
     Node *n = bt->root;

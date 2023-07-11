@@ -7,7 +7,7 @@
 
 typedef struct Person Person;
 
-Person *person_create(char *name, int age, float height);
+Person *person_create(int age, float height);
 
 void person_destroy(Person *p);
 

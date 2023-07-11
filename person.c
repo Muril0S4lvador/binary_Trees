@@ -1,16 +1,16 @@
 #include "person.h"
 
 struct Person{
-    char *name;
+    // char *name;
     int age;
     float height;
 };
 
 
-Person *person_create(char *name, int age, float height){
+Person *person_create(int age, float height){
     Person *p = malloc(sizeof(Person));
-    p->name = malloc(sizeof(char) * (strlen(name) + 1));
-    strcpy(p->name, name);
+    // p->name = malloc(sizeof(char) * (strlen(name) + 1));
+    // strcpy(p->name, name);
     p->age = age;
     p->height = height;
     
@@ -18,10 +18,11 @@ Person *person_create(char *name, int age, float height){
 }
 
 void person_destroy(Person *p){
-    free(p->name);
+    // free(p->name);
     free(p);
 }
 
 void person_print(Person *p){
-    printf("%s %d %.2f\n", p->name, p->age, p->height);
+    // printf("%s %d %.2f\n", p->name, p->age, p->height);
+    printf("%d %.2f\n", p->age, p->height);
 }
