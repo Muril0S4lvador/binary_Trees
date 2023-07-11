@@ -5,16 +5,6 @@
 #include "person.h"
 // #include "vector.h"
 
-/*
-A entrada do problema consiste em uma sequência de operações de atribuição e leitura de pares chave-valor 
-em uma árvore binária genérica. A primeira linha da entrada informa o número de operações. 
-Para cada operação de atribuição (set), são dados 4 valores representando o CPF de uma pessoa (string), 
-seu nome (assuma que sempre contém apenas uma palavra), idade (int) e altura (float). O CPF será a chave da árvore. 
-Os demais valores devem ser usados para criar uma variável do tipo Pessoa que será o valor associado à chave na árvore. 
-Para cada operação de leitura (get), é dado o CPF de uma pessoa e o programa deve mostrar na tela os dados da 
-pessoa que possui aquele CPF. A altura deve ser exibida com 2 casas depois da vírgula
-*/
-
 typedef int (*CmpFn)(void *, void *);
 typedef void (*KeyDestroyFn)(void *);
 typedef void (*ValDestroyFn)(void *);
@@ -41,11 +31,12 @@ typedef struct
 } BinaryTree;
 
 KeyValPair *key_val_pair_construct(void *key, void *val);
-void key_val_pair_destroy(KeyValPair *kvp);
+void key_val_pair_destroy(KeyValPair *kvp, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
 
 Node *node_construct(void *key, void *value, Node *left, Node *right);
-void node_destroy(Node *node);
-Node *_node_add_recursive(Node *n, void *key, void *value);
+Node *_node_destroy_recursive(Node *n, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
+void node_destroy(Node *node, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
+Node *_node_add_recursive(Node *n, void *key, void *value, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
 
 BinaryTree *binary_tree_construct(
     CmpFn cmp_fn, KeyDestroyFn key_destroy_fn,
@@ -53,11 +44,17 @@ BinaryTree *binary_tree_construct(
 void binary_tree_add(BinaryTree *bt, void *key, void *value);
 void binary_tree_add_recursive(BinaryTree *bt, void *key, void *value);
 int binary_tree_empty(BinaryTree *bt);
+
+/* vvvvvv */
+
 void binary_tree_remove(BinaryTree *bt, void *key);
 KeyValPair binary_tree_min(BinaryTree *bt);
 KeyValPair binary_tree_max(BinaryTree *bt);
 KeyValPair binary_tree_pop_min(BinaryTree *bt);
 KeyValPair binary_tree_pop_max(BinaryTree *bt);
+
+/* ^^^^^^ */
+
 void *binary_tree_get(BinaryTree *bt, void *key);
 void binary_tree_destroy(BinaryTree *bt);
 

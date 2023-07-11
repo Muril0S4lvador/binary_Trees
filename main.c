@@ -1,43 +1,48 @@
-/*
-9
-SET 123 jose 32 1.56
-GET 123
-SET 345 maria 18 2.11
-SET 001 paulo 55 1.65
-SET 211 naldo 43 1.89
-GET 001
-GET 211
-GET 345
-GET 123
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include "binary_tree.h"
-#include "person.h"
 
-int Cmp_fn(void *v1, void *v2){
-    return strcmp((char*)v1, (char*)v2);
+typedef struct
+{
+    int x, y;
+} Celula;
+
+Celula *celula_create(int x, int y)
+{
+    Celula *c = malloc(sizeof(Celula));
+    c->x = x;
+    c->y = y;
+    return c;
+}
+
+void celula_destroy(Celula *c)
+{
+    free(c);
+}
+
+int Cmp_fn(void *c1, void *c2)
+{
+    Celula *a = (Celula *)c1;
+    Celula *b = (Celula *)c2;
+
+    int x = (a->x - b->x),
+        y = (a->y - b->y);
+    if(x)
+        return x;
+    return y;
 }
 
 void KeyDestroy_fn(void *key){
-    free(key);
+    celula_destroy(key);
 }
 
 void ValDestroy_fn(void *val){
-    person_destroy(val);
-}
-
-void *key_create(char key[]){
-    char *v = malloc(sizeof(char) * (strlen(key) + 1));
-    strcpy(v, key);
-    return v;
+    free(val);
 }
 
 int main(){
-    int qtd, age;
-    float height;
-    char what[4], name[20], key[4];
+    int qtd, x, y, val;
+    char what[4];
     BinaryTree *bt = binary_tree_construct(Cmp_fn, KeyDestroy_fn, ValDestroy_fn);
 
     scanf("%d", &qtd);
@@ -46,18 +51,24 @@ int main(){
         scanf("%s", what);
 
         if( !strcmp(what, "SET") ){
-            scanf("%s %s %d %f", key, name, &age, &height);
-            void *v = key_create(key);
-            Person *person = person_create(name, age, height);
-            binary_tree_add_recursive(bt, v, person);
+            scanf("%d %d %d", &x, &y, &val);
+            Celula *c = celula_create(x, y);
+            int *ptr = malloc(sizeof(int));
+            *ptr = val;
+            binary_tree_add(bt, c, ptr);
 
         } else if( !strcmp(what, "GET") ){
-            scanf("%3s", key);
-            Person *p = binary_tree_get(bt, key);
-            person_print(p);
+            scanf("%d %d", &x, &y);
+            Celula *c = celula_create(x, y);
+            int *v = binary_tree_get(bt, c);
+            if(c)
+                celula_destroy(c);
+            if(v)
+                printf("%d\n", *v);
         }
     }
 
+    binary_tree_destroy(bt);
 
     return 0;
 }

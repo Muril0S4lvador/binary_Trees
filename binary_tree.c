@@ -1,5 +1,4 @@
 #include "binary_tree.h"
-#include "person.h"
 
 KeyValPair *key_val_pair_construct(void *key, void *val){
     KeyValPair *item = malloc(sizeof(KeyValPair));
@@ -8,9 +7,10 @@ KeyValPair *key_val_pair_construct(void *key, void *val){
     return item;
 }
 
-void key_val_pair_destroy(KeyValPair *kvp){
+void key_val_pair_destroy(KeyValPair *kvp, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
 
-    free(kvp->value);
+    key_destroy_fn(kvp->key);
+    val_destroy_fn(kvp->value);
     free(kvp);
 }
 
@@ -24,8 +24,9 @@ Node *node_construct(void *key, void *value, Node *left, Node *right){
     return n;
 }
 
-void node_destroy(Node *node){
-    key_val_pair_destroy(node->pair);
+void node_destroy(Node *node, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
+    key_val_pair_destroy(node->pair, key_destroy_fn, val_destroy_fn);
+    free(node);
 
 }
 
@@ -69,6 +70,7 @@ void binary_tree_add(BinaryTree *bt, void *key, void *value){
         } else{
 
             bt->val_destroy_fn(pair->value);
+            bt->key_destroy_fn(key);
             pair->value = value;
             return;
         }
@@ -83,24 +85,26 @@ void binary_tree_add(BinaryTree *bt, void *key, void *value){
 }
 
 void binary_tree_add_recursive(BinaryTree *bt, void *key, void *value){
-    bt->root = _node_add_recursive(bt->root, key, value);
+    bt->root = _node_add_recursive(bt->root, key, value, bt->key_destroy_fn, bt->val_destroy_fn);
 }
 
-Node *_node_add_recursive(Node *n, void *key, void *value){
+Node *_node_add_recursive(Node *n, void *key, void *value, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
     if(!n){
         n = node_construct(key, value, NULL, NULL);
 
     } else if( strcmp(n->pair->key, key) < 0 ){
         // n->pair->key menor que key || key maior que n->pair->key
-        n->right = _node_add_recursive(n->right, key, value);
+        n->right = _node_add_recursive(n->right, key, value, key_destroy_fn, val_destroy_fn);
 
     } else if( strcmp(n->pair->key, key) > 0 ){
         // n->pair->key maior que key || key menor que n->pair->key
-        n->left = _node_add_recursive(n->left, key, value);
+        n->left = _node_add_recursive(n->left, key, value, key_destroy_fn, val_destroy_fn);
 
     } else{
         // chaves iguais
-        // Nada por enquanto
+        val_destroy_fn(n->pair->value);
+        key_destroy_fn(key);
+        n->pair->value = value;
     }
 
     return n;
@@ -144,6 +148,17 @@ void *binary_tree_get(BinaryTree *bt, void *key){
 }
 
 void binary_tree_destroy(BinaryTree *bt){
+    bt->root = _node_destroy_recursive(bt->root, bt->key_destroy_fn, bt->val_destroy_fn);
+    free(bt);
+}
 
-    
+Node *_node_destroy_recursive(Node *n, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
+    if(n){
+        n->left = _node_destroy_recursive(n->left, key_destroy_fn, val_destroy_fn);
+        n->right = _node_destroy_recursive(n->right, key_destroy_fn, val_destroy_fn);
+
+        if( !n->left && !n->right )
+            node_destroy(n, key_destroy_fn, val_destroy_fn);
+    }
+    return NULL;
 }

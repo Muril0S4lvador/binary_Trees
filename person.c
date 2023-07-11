@@ -11,7 +11,6 @@ Person *person_create(char *name, int age, float height){
     Person *p = malloc(sizeof(Person));
     p->name = malloc(sizeof(char) * (strlen(name) + 1));
     strcpy(p->name, name);
-    // free(name);
     p->age = age;
     p->height = height;
     
