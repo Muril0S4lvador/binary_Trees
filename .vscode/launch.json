@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "name": "debugar codigo",
+      "type": "cppdbg",
+      "request": "launch",
+      "cwd": ".",
+      "program": "${workspaceRoot}/main",
+      "args": ["<inputs/input1.txt"],
+      "preLaunchTask": "compilacao"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": ["<inputs/input1.txt"],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/murilo/murilo/estDados/binary_trees",
+      "program": "/home/murilo/murilo/estDados/binary_trees/main",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

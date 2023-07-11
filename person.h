@@ -9,4 +9,8 @@ typedef struct Person Person;
 
 Person *person_create(char *name, int age, float height);
 
+void person_destroy(Person *p);
+
 void person_print(Person *p);
+
+#endif
