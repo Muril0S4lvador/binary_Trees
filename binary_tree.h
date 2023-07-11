@@ -45,6 +45,7 @@ void key_val_pair_destroy(KeyValPair *kvp);
 
 Node *node_construct(void *key, void *value, Node *left, Node *right);
 void node_destroy(Node *node);
+Node *_node_add_recursive(Node *n, void *key, void *value);
 
 BinaryTree *binary_tree_construct(
     CmpFn cmp_fn, KeyDestroyFn key_destroy_fn,
@@ -62,7 +63,7 @@ void binary_tree_destroy(BinaryTree *bt);
 
 // a funcao abaixo pode ser util para debug, mas nao eh obrigatoria.
 // void binary_tree_print(BinaryTree *bt);
-
+/*
 Vector *binary_tree_inorder_traversal(BinaryTree *bt);
 Vector *binary_tree_preorder_traversal(BinaryTree *bt);
 Vector *binary_tree_postorder_traversal(BinaryTree *bt);
@@ -71,5 +72,6 @@ Vector *binary_tree_levelorder_traversal(BinaryTree *bt);
 Vector *binary_tree_inorder_traversal_recursive(BinaryTree *bt);
 Vector *binary_tree_preorder_traversal_recursive(BinaryTree *bt);
 Vector *binary_tree_postorder_traversal_recursive(BinaryTree *bt);
+*/
 
 #endif
