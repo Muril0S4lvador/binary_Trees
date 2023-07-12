@@ -175,8 +175,6 @@ void binary_tree_remove(BinaryTree *bt, void *key){
             n2 = n2->left;
         }
     }
-
-    node_destroy(n, bt->key_destroy_fn, bt->val_destroy_fn);
 }
 
 KeyValPair binary_tree_min(BinaryTree *bt){
@@ -274,4 +272,91 @@ Node *_node_destroy_recursive(Node *n, KeyDestroyFn key_destroy_fn, ValDestroyFn
             node_destroy(n, key_destroy_fn, val_destroy_fn);
     }
     return NULL;
+}
+
+Vector *binary_tree_inorder_traversal(BinaryTree *bt){
+    Vector *v = vector_construct();
+    Stack *s = stack_construct();
+
+    Node *act = bt->root, *pop;
+
+    while( 1 ){
+
+        while(act){
+            stack_push(s, act);
+            act = act->left;
+        }
+
+        if(stack_empty(s)){
+            stack_destroy(s);
+            break;
+        } else {
+            pop = stack_pop(s);
+            vector_push_back(v, pop->pair);
+            act = pop->right;
+        }
+    }
+
+    return v;
+}
+
+Vector *binary_tree_preorder_traversal(BinaryTree *bt){
+    Vector *v = vector_construct();
+    Stack *s = stack_construct();
+    Node *pop;
+    
+    stack_push(s, bt->root);
+
+    while(!stack_empty(s)){
+        pop = stack_pop(s);
+        vector_push_back(v, pop->pair);
+        if(pop->right) stack_push(s, pop->right);
+        if(pop->left) stack_push(s, pop->left);
+    }
+    stack_destroy(s);
+
+    return v;
+}
+
+Vector *binary_tree_postorder_traversal(BinaryTree *bt){
+    Vector *v = vector_construct();
+    Stack *q1 = stack_construct(), *q2 = stack_construct();
+    Node *n;
+
+    stack_push(q1, bt->root);
+
+    while(!stack_empty(q1)){
+        n = stack_pop(q1);
+        if(n->left) stack_push(q1, n->left);
+        if(n->right) stack_push(q1, n->right);
+        stack_push(q2, n);
+    }
+    while(!stack_empty(q2)){
+        n = stack_pop(q2);
+        vector_push_back(v, n->pair);
+    }
+
+    stack_destroy(q1);
+    stack_destroy(q2);
+    return v;
+}
+
+Vector *binary_tree_levelorder_traversal(BinaryTree *bt){
+    Vector *v = vector_construct();
+    Queue *q = queue_construct();
+    Node *n;
+
+    queue_push(q, bt->root);
+
+    while(!queue_empty(q)){
+        n = queue_pop(q);
+        if(n){
+            vector_push_back(v, n->pair);
+            if(n->left) queue_push(q, n->left);
+            if(n->right) queue_push(q, n->right);
+        }
+    }
+    queue_destroy(q);
+
+    return v;
 }

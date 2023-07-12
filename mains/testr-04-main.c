@@ -49,6 +49,7 @@ int main()
 {
     int i, n, idade;
     float altura;
+    char op[20];
     char nome[100];
 
     scanf("%d", &n);
@@ -57,21 +58,29 @@ int main()
 
     for (i = 0; i < n; i++)
     {
-        scanf("\nSET %s %d %f", nome, &idade, &altura);
-        binary_tree_add(bt, strdup(nome), person_construct(nome, idade, altura));
-    }
+        scanf("\n%s", op);
 
-    Vector *v = binary_tree_levelorder_traversal(bt);
+        if (!strcmp(op, "SET"))
+        {
+            scanf("%s %d %f", nome, &idade, &altura);
+            binary_tree_add(bt, strdup(nome), person_construct(nome, idade, altura));
+        }
+        else
+        {
+            KeyValPair *pair;
 
-    for (i = 0; i < vector_size(v); i++)
-    {
-        KeyValPair *pair = vector_get(v, i);
-        Person *p = pair->value;
-        printf("%s %d %.2f\n", p->name, p->idade, p->altura);
+            if (!strcmp(op, "MAX"))
+                pair = binary_tree_max(bt);
+            else
+                pair = binary_tree_min(bt);
+
+            Person *p = pair->value;
+            printf("%s %d %.2f\n", p->name, p->idade, p->altura);
+            key_val_pair_destroy(pair);
+        }
     }
 
     binary_tree_destroy(bt);
-    vector_destroy(v);
 
     return 0;
 }

@@ -6,7 +6,7 @@
       "request": "launch",
       "cwd": ".",
       "program": "${workspaceRoot}/main",
-      "args": ["<inputs/input1.txt"],
+      "args": [],
       "preLaunchTask": "compilacao"
     },
     {
