@@ -360,3 +360,45 @@ Vector *binary_tree_levelorder_traversal(BinaryTree *bt){
 
     return v;
 }
+
+Vector *binary_tree_inorder_traversal_recursive(BinaryTree *bt){
+    Vector *v = vector_construct();
+    v = _inorder_traversal_recursive(v, bt->root);
+    return v;
+}
+
+Vector *_inorder_traversal_recursive(Vector *v, Node *n){
+    if(!n) return v;
+    v = _inorder_traversal_recursive(v, n->left);
+    vector_push_back(v, n->pair);
+    v = _inorder_traversal_recursive(v, n->right);
+    return v;
+}
+
+Vector *binary_tree_preorder_traversal_recursive(BinaryTree *bt){
+    Vector *v = vector_construct();
+    v = _preorder_trasversal_recursive(v, bt->root);
+    return v;
+}
+
+Vector *_preorder_trasversal_recursive(Vector *v, Node *n){
+    if(!n) return v;
+    vector_push_back(v, n->pair);
+    v = _preorder_trasversal_recursive(v, n->left);
+    v = _preorder_trasversal_recursive(v, n->right);
+    return v;
+}
+
+Vector *binary_tree_postorder_traversal_recursive(BinaryTree *bt){
+    Vector *v = vector_construct();
+    v = _postorder_traversal_recursive(v, bt->root);
+    return v;
+}
+
+Vector *_postorder_traversal_recursive(Vector *v, Node *n){
+    if(!n) return v;
+    v = _postorder_traversal_recursive(v, n->left);
+    v = _postorder_traversal_recursive(v, n->right);
+    vector_push_back(v, n->pair);
+    return v;
+}

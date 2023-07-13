@@ -13,7 +13,7 @@
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
-      "args": ["<inputs/input1.txt"],
+      "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
       "cwd": "/home/murilo/murilo/estDados/binary_trees",
