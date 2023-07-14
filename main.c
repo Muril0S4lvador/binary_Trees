@@ -79,13 +79,13 @@ int main()
         {
             scanf("%s", cpf);
             Person *p = binary_tree_get(bt, cpf);
-
             if (p == NULL)
                 printf("CHAVE INEXISTENTE\n");
             else
                 printf("%s %d %.2f\n", p->name, p->idade, p->altura);
         }
     }
+
 
     binary_tree_destroy(bt);
 

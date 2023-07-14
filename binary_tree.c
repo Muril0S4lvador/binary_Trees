@@ -27,7 +27,6 @@ Node *node_construct(void *key, void *value, Node *left, Node *right){
 void node_destroy(Node *node, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
     key_val_pair_destroy(node->pair, key_destroy_fn, val_destroy_fn);
     free(node);
-
 }
 
 BinaryTree *binary_tree_construct(
@@ -143,38 +142,72 @@ void binary_tree_remove(BinaryTree *bt, void *key){
     if(!n){
         return;
 
-    } else if(n == bt->root){
-        bt->root = NULL;
-
     } else if( !n->left && !n->right ){
         // Caso nao tenha filhos
-        if(left)
-            parent->left = NULL;
-        else
-            parent->right = NULL;
-        
+        if(!parent){
+
+            bt->root = NULL;
+
+        } else {
+            if(left)
+                parent->left = NULL;
+            else
+                parent->right = NULL;
+        }
     } else if( !n->left ){
         // Caso tenha apenas filho a direita
-        if(left)
-            parent->left = n->right;
-        else
-            parent->right = n->right;
+        if(!parent){
+            bt->root = n->right;
+
+        } else {
+            if(left)
+                parent->left = n->right;
+            else
+                parent->right = n->right;
+        }
 
     } else if( !n->right ){
         // Caso tenha apenas filho a esquerda
-        if(left)
-            parent->left = n->left;
-        else
-            parent->right = n->left;
+        if(!parent){
+            bt->root = n->left;
+            
+        } else {
+            if(left)
+                parent->left = n->left;
+            else
+                parent->right = n->left;
+        }
 
     } else{
-        Node *sucessor = NULL, *n2 = n->right;
+        Node *sucessor = n->right, *sucessor_parent = NULL;
 
-        while( n2 ){
-            sucessor = n2;
-            n2 = n2->left;
+        while( sucessor->left ){
+            sucessor_parent = sucessor;
+            sucessor = sucessor->left;
+        }
+
+        if(!parent){
+            bt->root = sucessor;
+
+        } else {
+            if(left)
+                parent->left = sucessor;
+            else
+                parent->right = sucessor;
+        }
+        
+        sucessor->left = n->left;
+
+        if( sucessor_parent && sucessor_parent->pair != n->pair ){
+            
+            if( sucessor->right )
+                sucessor_parent->left = sucessor->right;
+            else
+                sucessor_parent->left = NULL;
+            
         }
     }
+    node_destroy(n, bt->key_destroy_fn, bt->val_destroy_fn);
 }
 
 KeyValPair binary_tree_min(BinaryTree *bt){
@@ -265,13 +298,15 @@ void binary_tree_destroy(BinaryTree *bt){
 
 Node *_node_destroy_recursive(Node *n, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
     if(n){
-        n->left = _node_destroy_recursive(n->left, key_destroy_fn, val_destroy_fn);
-        n->right = _node_destroy_recursive(n->right, key_destroy_fn, val_destroy_fn);
+        if(n->left) n->left = _node_destroy_recursive(n->left, key_destroy_fn, val_destroy_fn);
+        if(n->right) n->right = _node_destroy_recursive(n->right, key_destroy_fn, val_destroy_fn);
 
-        if( !n->left && !n->right )
+        if( !n->left && !n->right ){
             node_destroy(n, key_destroy_fn, val_destroy_fn);
+            n = NULL;
+        }
     }
-    return NULL;
+    return n;
 }
 
 Vector *binary_tree_inorder_traversal(BinaryTree *bt){
@@ -351,7 +386,7 @@ Vector *binary_tree_levelorder_traversal(BinaryTree *bt){
     while(!queue_empty(q)){
         n = queue_pop(q);
         if(n){
-            vector_push_back(v, n->pair);
+            vector_push_back(v, n->pair->value);
             if(n->left) queue_push(q, n->left);
             if(n->right) queue_push(q, n->right);
         }
