@@ -135,7 +135,6 @@ void binary_tree_remove(BinaryTree *bt, void *key){
 
         } else{
             break;
-
         }
     }
 
@@ -181,12 +180,14 @@ void binary_tree_remove(BinaryTree *bt, void *key){
     } else{
         Node *sucessor = n->right, *sucessor_parent = NULL;
 
+        // Acha o node mais a esquerda do n->right
         while( sucessor->left ){
             sucessor_parent = sucessor;
             sucessor = sucessor->left;
         }
 
         if(!parent){
+            // Se nao tem parent, quer dizer que é a propria raiz
             bt->root = sucessor;
 
         } else {
@@ -196,9 +197,10 @@ void binary_tree_remove(BinaryTree *bt, void *key){
                 parent->right = sucessor;
         }
         
+        // A esquerda de n passa a ser a esquerda do sucessor
         sucessor->left = n->left;
 
-        if( sucessor_parent && sucessor_parent->pair != n->pair ){
+        if( sucessor_parent ){
             
             if( sucessor->right )
                 sucessor_parent->left = sucessor->right;
@@ -206,6 +208,9 @@ void binary_tree_remove(BinaryTree *bt, void *key){
                 sucessor_parent->left = NULL;
             
         }
+
+        if(n->right->pair != sucessor->pair)
+            sucessor->right = n->right;
     }
     node_destroy(n, bt->key_destroy_fn, bt->val_destroy_fn);
 }
@@ -385,6 +390,7 @@ Vector *binary_tree_levelorder_traversal(BinaryTree *bt){
 
     while(!queue_empty(q)){
         n = queue_pop(q);
+        // printf("n->key = %s\n", (char*)n->pair->key);
         if(n){
             vector_push_back(v, n->pair->value);
             if(n->left) queue_push(q, n->left);
