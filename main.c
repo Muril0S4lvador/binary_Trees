@@ -84,10 +84,6 @@ int main()
             else
                 printf("%s %d %.2f\n", p->name, p->idade, p->altura);
         }
-
-        Vector *v = binary_tree_levelorder_traversal(bt);
-        vector_destroy(v);
-        
     }
 
 
